@@ -27,8 +27,8 @@ struct VSInput
 
 struct VSOutput
 {
-  float4 Position : SV_Position;
   float2 TexCoord : TEXCOORD;
+  float4 Position : SV_Position;
 };
 
 VSOutput VS(VSInput input)

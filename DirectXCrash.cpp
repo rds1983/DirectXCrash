@@ -429,10 +429,10 @@ ID3D11Buffer* D3DApp::CreateVertexBuffer(const RECT& rectangle, const POINTF& te
 	ID3D11Buffer* result;
 	ThrowIfFailed(md3dDevice->CreateBuffer(&desc, nullptr, &result));
 
-	int left = rectangle.left;
-	int top = rectangle.top;
-	int bottom = rectangle.bottom;
-	int right = rectangle.right;
+	float left = (float)rectangle.left;
+	float top = (float)rectangle.top;
+	float bottom = (float)rectangle.bottom;
+	float right = (float)rectangle.right;
 
 	VertexPositionTexture data[4];
 	data[0].Position[0] = left;
@@ -561,8 +561,8 @@ bool D3DApp::InitDirect3D()
 	
 	OnResize();
 
-	mShader1 = CreateShader(L"RebuildZBuffer.fx", 112);
-	mShader2 = CreateShader(L"CameraMotionBlur.fx", 224);
+	mShader1 = CreateShader(L"RebuildZBuffer.fx", 16);
+	mShader2 = CreateShader(L"CameraMotionBlur.fx", 64);
 
 	RECT r;
 	r.left = 0;

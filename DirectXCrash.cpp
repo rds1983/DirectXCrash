@@ -92,7 +92,7 @@ int D3DApp::Run()
 		else
         {
 			// Vertex Buffer
-			UINT stride = 20, offset = 0;
+			UINT stride = sizeof(VertexPositionTexture), offset = 0;
 			context->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
 			context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -348,7 +348,7 @@ bool D3DApp::InitMainWindow()
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	RECT R = { 0, 0, mClientWidth, mClientHeight };
+	RECT R = { 100, 100, mClientWidth, mClientHeight };
     AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width  = R.right - R.left;
 	int height = R.bottom - R.top;
@@ -421,7 +421,7 @@ ID3D11Buffer* D3DApp::CreateVertexBuffer(const RECT& rectangle, const POINTF& te
 	D3D11_BUFFER_DESC desc;
 
 	memset(&desc, 0, sizeof(desc));
-	desc.ByteWidth = 4 * 20;
+	desc.ByteWidth = 4 * sizeof(VertexPositionTexture);
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -461,7 +461,7 @@ ID3D11Buffer* D3DApp::CreateVertexBuffer(const RECT& rectangle, const POINTF& te
 
 	D3D11_MAPPED_SUBRESOURCE dataBox;
 	ThrowIfFailed(context->Map(result, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataBox));
-	memcpy(dataBox.pData, &data, 4 * 20);
+	memcpy(dataBox.pData, &data, 4 * sizeof(VertexPositionTexture));
 	context->Unmap(result, 0);
 
 	return result;

@@ -64,7 +64,7 @@ inline std::wstring AnsiToWString(const std::string& str)
 
 struct VertexPositionTexture
 {
-	float Position[3];
+	float Position[4];
 	float TexCoord[2];
 };
 

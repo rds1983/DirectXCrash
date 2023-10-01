@@ -6,6 +6,7 @@
 #include <WindowsX.h>
 #include <sstream>
 #include <assert.h>
+#include <vector>
 
 namespace
 {
@@ -66,7 +67,7 @@ D3DApp::~D3DApp()
 	ReleaseCOM(md3dDevice);
 }
 
-HINSTANCE D3DApp::AppInst()const
+HINSTANCE D3DApp::AppInst() const
 {
 	return mhAppInst;
 }
@@ -369,15 +370,32 @@ bool D3DApp::InitMainWindow()
 
 ID3D11Buffer* D3DApp::CreateConstantBuffer(int bufferSize) const
 {
+	// https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-resources-buffers-constant-how-to
 	D3D11_BUFFER_DESC desc;
 
+	// Fill in a buffer description.
 	memset(&desc, 0, sizeof(desc));
 	desc.ByteWidth = bufferSize;
-	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
+	// Fill in the subresource data.
+	std::vector<unsigned char> initialData;
+	initialData.resize(bufferSize);
+	for (int i = 0; i < bufferSize; ++i)
+	{
+		initialData[i] = 0;
+	}
+
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = initialData.data();
+	InitData.SysMemPitch = 0;
+	InitData.SysMemSlicePitch = 0;
+
+	// Create the buffer.
 	ID3D11Buffer* result;
-	ThrowIfFailed(md3dDevice->CreateBuffer(&desc, nullptr, &result));
+	ThrowIfFailed(md3dDevice->CreateBuffer(&desc, &InitData, &result));
 
 	return result;
 }
@@ -402,8 +420,8 @@ Shader D3DApp::CreateShader(const std::wstring& filename, int bufferSize) const
 
 	D3D11_INPUT_ELEMENT_DESC quadLayout[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	ThrowIfFailed(md3dDevice->CreateInputLayout(quadLayout, 2, vertexBlob->GetBufferPointer(), vertexBlob->GetBufferSize(), &result.mInput));
@@ -438,24 +456,28 @@ ID3D11Buffer* D3DApp::CreateVertexBuffer(const RECT& rectangle, const POINTF& te
 	data[0].Position[0] = left;
 	data[0].Position[1] = top;
 	data[0].Position[2] = 0;
+	data[0].Position[3] = 1;
 	data[0].TexCoord[0] = texCoordTopLeft.x;
 	data[0].TexCoord[1] = texCoordTopLeft.y;
 	
 	data[1].Position[0] = right;
 	data[1].Position[1] = top;
 	data[1].Position[2] = 0;
+	data[1].Position[3] = 1;
 	data[1].TexCoord[0] = texCoordBottomRight.x;
 	data[1].TexCoord[1] = texCoordTopLeft.y;
 
 	data[2].Position[0] = left;
 	data[2].Position[1] = bottom;
 	data[2].Position[2] = 0;
+	data[2].Position[3] = 1;
 	data[2].TexCoord[0] = texCoordTopLeft.x;
 	data[2].TexCoord[1] = texCoordBottomRight.y;
 
 	data[3].Position[0] = right;
 	data[3].Position[1] = bottom;
 	data[3].Position[2] = 0;
+	data[3].Position[3] = 1;
 	data[3].TexCoord[0] = texCoordBottomRight.x;
 	data[3].TexCoord[1] = texCoordBottomRight.y;
 
@@ -628,5 +650,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	{
 		std::wstring w = ex.ToString();
 		MessageBoxW(nullptr, w.c_str(), L"Error", MB_OK);
+		return 0;
 	}
 }

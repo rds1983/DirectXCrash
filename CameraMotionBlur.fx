@@ -65,7 +65,9 @@ VSFrustumRayOutput VS(VSFrustumRayInput input)
     VSFrustumRayOutput output = (VSFrustumRayOutput) 0;
     output.Position = position;
     output.TexCoord = texCoord;
-    output.FrustumRay = FrustumCorners[GetCornerIndex(input.TexCoord)];
+    
+    int index = (int) clamp(GetCornerIndex(input.TexCoord), 0, 3);
+    output.FrustumRay = FrustumCorners[index];
   
     return output;
 }

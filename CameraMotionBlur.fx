@@ -75,5 +75,5 @@ VSFrustumRayOutput VS(VSFrustumRayInput input)
 
 float4 PS(VSFrustumRayOutput input) : COLOR0
 {
-  return float4(1, 1, 1, 1);
+  return float4(0, 1, 0.5, 1);
 }

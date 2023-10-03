@@ -79,6 +79,7 @@ HWND D3DApp::MainWnd()const
 
 int D3DApp::Run()
 {
+	static float black[] = {0.0f, 0.0f, 0.0f, 1.0f};
 	MSG msg = {0};
  
 	while(msg.message != WM_QUIT)
@@ -92,6 +93,10 @@ int D3DApp::Run()
 		// Otherwise, do animation/game stuff.
 		else
         {
+			// Clear
+			context->ClearRenderTargetView(mRenderTargetView, black);
+			context->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
 			// Vertex Buffer
 			UINT stride = sizeof(VertexPositionTexture), offset = 0;
 			context->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
@@ -349,7 +354,7 @@ bool D3DApp::InitMainWindow()
 	}
 
 	// Compute window rectangle dimensions based on requested client area dimensions.
-	RECT R = { 100, 100, mClientWidth, mClientHeight };
+	RECT R = { 0, 0, mClientWidth, mClientHeight };
     AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
 	int width  = R.right - R.left;
 	int height = R.bottom - R.top;

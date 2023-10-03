@@ -11,6 +11,7 @@ I’ve spend more work to localize the problem and came with minimal code that r
 1. Clone this repo.
 2. Open the solution in the IDE, compile and run.
 3. It'll crash in the period from 1 to 30 seconds:
+
 https://github.com/rds1983/DirectXCrash/assets/1057289/cc6fcafa-94eb-49e6-a870-a86e578061a0
 
 
